@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  admin_id       Int     @id @default(autoincrement())
+  username       String  @db.VarChar(250)
+  password       String  @db.VarChar(250)
+  first_name     String? @db.VarChar(250)
+  middle_name    String? @db.VarChar(250)
+  last_name      String? @db.VarChar(250)
+  email_address  String? @db.VarChar(250)
+  contact_number String? @db.VarChar(250)
+  status         String  @default("ACTIVE") @db.VarChar(100)
+}
+
+model appointment {
+  appointment_id Int      @id @default(autoincrement())
+  description    String   @db.VarChar(255)
+  doctor_name    String?  @db.VarChar(255)
+  doctor_id      Int?
+  doctor         doctor?  @relation(fields: [doctor_id], references: [doctor_id])
+  patient_id     Int?
+  patient        patient? @relation(fields: [patient_id], references: [patient_id], onDelete: Cascade)
+  date           DateTime
+  status         String   @default("PENDING") @db.VarChar(255)
+  request_status String   @default("PENDING") @db.VarChar(255)
+}
+
+model inventory {
+  inventory_id Int      @id @default(autoincrement())
+  description  String?  @db.VarChar(255)
+  name         String?  @db.VarChar(255)
+  quantity     Int?     @db.Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model doctor {
+  doctor_id    Int           @id @default(autoincrement())
+  first_name   String        @db.VarChar(255)
+  middle_name  String?       @db.VarChar(255)
+  username     String        @db.VarChar(250)
+  password     String        @db.VarChar(250)
+  last_name    String        @db.VarChar(255)
+  suffix       String        @db.VarChar(255)
+  specialist   String        @db.VarChar(255)
+  id_number    String        @db.VarChar(255)
+  barangay     String        @db.VarChar(255)
+  appointments appointment[]
+  status       String        @default("ACTIVE") @db.VarChar(100)
+}
+
+model event {
+  event_id    Int      @id @default(autoincrement())
+  title       String   @db.Text
+  description String   @db.Text
+  image       String   @db.LongText
+  date        DateTime @default(now())
+}
+
+model patient {
+  patient_id     Int           @id @default(autoincrement())
+  username       String        @db.VarChar(255)
+  password       String        @db.VarChar(255)
+  first_name     String        @db.VarChar(255)
+  middle_name    String?       @db.VarChar(255)
+  last_name      String        @db.VarChar(255)
+  suffix         String        @db.VarChar(255)
+  birthdate      DateTime      @db.Date
+  contact_number String        @db.VarChar(255)
+  house_address  String?       @db.VarChar(255)
+  city           String?       @db.VarChar(255)
+  gender         String?       @db.VarChar(255)
+  zip            String?       @db.VarChar(255)
+  email          String        @db.VarChar(255)
+  barangay       String        @db.VarChar(255)
+  status         String        @default("ACTIVE") @db.VarChar(100)
+  appointments   appointment[]
+}
